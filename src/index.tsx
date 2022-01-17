@@ -12,7 +12,10 @@ import App from "./App";
 class DeephavenIrisGrid extends HTMLElement {
   connectedCallback() {
     const mountPoint = document.createElement("div");
-    this.attachShadow({ mode: "open" }).appendChild(mountPoint);
+    // When using shadow DOM, need to figure out how to properly import styles...
+    // For now just appendChild instead of attachShadow
+    // this.attachShadow({ mode: "open" }).appendChild(mountPoint);
+    this.appendChild(mountPoint);
 
     const name = this.getAttribute("name");
     ReactDOM.render(

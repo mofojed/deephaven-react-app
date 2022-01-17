@@ -109,14 +109,14 @@ function App({
 
   return (
     <div className="App">
-      {/* {isLoaded && <IrisGrid model={model} />} */}
-      {/* {!isLoaded && ( */}
-      <LoadingOverlay
-        isLoaded={false}
-        isLoading={true}
-        errorMessage={error ? error : null}
-      />
-      {/* )} */}
+      {isLoaded && <IrisGrid model={model} />}
+      {!isLoaded && (
+        <LoadingOverlay
+          isLoaded={isLoaded}
+          isLoading={isLoading}
+          errorMessage={error ? error : null}
+        />
+      )}
     </div>
   );
 }
