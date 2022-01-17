@@ -53,7 +53,10 @@ async function createTable(session: any) {
  * By default, tries to connect to the server defined in the REACT_APP_CORE_API_URL variable, which is set to http://localhost:1000/jsapi
  * See create-react-app docs for how to update these env vars: https://create-react-app.dev/docs/adding-custom-environment-variables/
  */
-function App() {
+function App({
+  tableName: tableNameProp,
+  apiUrl,
+}: { tableName?: string; apiUrl?: string } = {}) {
   const [model, setModel] = useState<IrisGridModel>();
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
@@ -62,7 +65,7 @@ function App() {
     try {
       // Connect to the Web API server
       const baseUrl = new URL(
-        process.env.REACT_APP_CORE_API_URL ?? `${window.location}`
+        apiUrl ?? process.env.REACT_APP_CORE_API_URL ?? `${window.location}`
       );
 
       const websocketUrl = `${baseUrl.protocol}//${baseUrl.host}`;
@@ -76,7 +79,7 @@ function App() {
 
       // Get the table name from the query param `tableName`.
       const searchParams = new URLSearchParams(window.location.search);
-      const tableName = searchParams.get("tableName");
+      const tableName = tableNameProp ?? searchParams.get("tableName");
 
       // If a table name was specified, load that table. Otherwise, create a new table.
       const table = await (tableName
@@ -96,7 +99,7 @@ function App() {
       setError(`${e}`);
     }
     setIsLoading(false);
-  }, []);
+  }, [apiUrl, tableNameProp]);
 
   useEffect(() => {
     initApp();
@@ -106,14 +109,14 @@ function App() {
 
   return (
     <div className="App">
-      {isLoaded && <IrisGrid model={model} />}
-      {!isLoaded && (
-        <LoadingOverlay
-          isLoaded={isLoaded}
-          isLoading={isLoading}
-          errorMessage={error ? error : null}
-        />
-      )}
+      {/* {isLoaded && <IrisGrid model={model} />} */}
+      {/* {!isLoaded && ( */}
+      <LoadingOverlay
+        isLoaded={false}
+        isLoading={true}
+        errorMessage={error ? error : null}
+      />
+      {/* )} */}
     </div>
   );
 }

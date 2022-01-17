@@ -1,23 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 
 // Fira fonts are not necessary, but look the best
-import 'fira';
+import "fira";
 
 // Need to import the base style sheet for proper styling
-import '@deephaven/components/dist/BaseStyleSheet.css';
-import './index.scss';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import "@deephaven/components/dist/BaseStyleSheet.css";
+import "./index.scss";
+import App from "./App";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+class DeephavenIrisGrid extends HTMLElement {
+  connectedCallback() {
+    const mountPoint = document.createElement("div");
+    this.attachShadow({ mode: "open" }).appendChild(mountPoint);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+    const name = this.getAttribute("name");
+    ReactDOM.render(
+      <App tableName={name !== null ? name : undefined}></App>,
+      mountPoint
+    );
+  }
+}
+customElements.define("iris-grid", DeephavenIrisGrid);
+
+export default DeephavenIrisGrid;
