@@ -2,14 +2,43 @@
 <html lang="en">
 
 <head>
+  <style>
+    body {
+      font: 12px Fira Mono, Roboto, monospace;
+    }
+    .iris-grid-frame {
+      display: inline-block;
+    }
+    .iris-grid-frame h1 small {
+      color: gray;
+      font-size: small;
+    }
+    .iris-grid-frame iframe {
+      width: 500px;
+      height: 500px;
+    }
+  </style>
 </head>
 
 <body>
   <div>
     <!-- Embed the grid in an iframe. Expects server to be running on port 3000 -->
-    <iframe src="http://localhost:3000"></iframe>
-    <iframe src="http://localhost:3000?tableName=hello"></iframe>
-    <iframe src="http://localhost:3000?tableName=world"></iframe>
+    <div class="iris-grid-frame">
+      <h1>Create Table <small>http://localhost:3000</small></h1>
+      <iframe src="http://localhost:3000"></iframe>
+    </div>
+    <div class="iris-grid-frame">
+      <h1>Load table "world" <small>http://localhost:3000?tableName=world</small></h1>
+      <iframe src="http://localhost:3000?tableName=world"></iframe>
+    </div>
+    <div class="iris-grid-frame">
+      <h1>Can copy <small>http://localhost:3000?tableName=world&canCopy=1</small></h1>
+      <iframe src="http://localhost:3000?tableName=world&canCopy=1"></iframe>
+    </div>
+    <div class="iris-grid-frame">
+      <h1>Can download CSV <small>http://localhost:3000?tableName=world&canDownloadCsv=1</small></h1>
+      <iframe src="http://localhost:3000?tableName=world&canDownloadCsv=1"></iframe>
+    </div>
   </div>
 </body>
 

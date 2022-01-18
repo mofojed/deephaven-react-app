@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { LoadingOverlay } from "@deephaven/components"; // Use the loading spinner from the Deephaven components package
+import { ContextMenuRoot, LoadingOverlay } from "@deephaven/components"; // Use the loading spinner from the Deephaven components package
 import {
   IrisGrid,
   IrisGridModel,
@@ -57,6 +57,9 @@ function App() {
   const [model, setModel] = useState<IrisGridModel>();
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
+  const searchParams = new URLSearchParams(window.location.search);
+  const canCopy = searchParams.get("canCopy") === "1";
+  const canDownloadCsv = searchParams.get("canDownloadCsv") === "1";
 
   const initApp = useCallback(async () => {
     try {
@@ -106,7 +109,13 @@ function App() {
 
   return (
     <div className="App">
-      {isLoaded && <IrisGrid model={model} />}
+      {isLoaded && (
+        <IrisGrid
+          canCopy={canCopy}
+          canDownloadCsv={canDownloadCsv}
+          model={model}
+        />
+      )}
       {!isLoaded && (
         <LoadingOverlay
           isLoaded={isLoaded}
@@ -114,6 +123,7 @@ function App() {
           errorMessage={error ? error : null}
         />
       )}
+      <ContextMenuRoot />
     </div>
   );
 }
