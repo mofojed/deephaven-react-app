@@ -24,12 +24,12 @@
   <div>
     <!-- Embed the grid in an iframe. Expects server to be running on port 3000 -->
     <div class="iris-grid-frame">
-      <h1>Create Table <small>http://localhost:3000</small></h1>
-      <iframe src="http://localhost:3000"></iframe>
+      <h1>Load table "world" <small>http://localhost:3000?tableName=world</small></h1>
+      <iframe src="http://localhost:3000?tableName=world" id="iframe-world"></iframe>
     </div>
     <div class="iris-grid-frame">
-      <h1>Load table "world" <small>http://localhost:3000?tableName=world</small></h1>
-      <iframe src="http://localhost:3000?tableName=world"></iframe>
+      <h1>Load table "basic" <small>http://localhost:3000?tableName=basic</small></h1>
+      <iframe src="http://localhost:3000?tableName=basic" id="iframe-basic"></iframe>
     </div>
     <div class="iris-grid-frame">
       <h1>Can copy <small>http://localhost:3000?tableName=world&canCopy=1</small></h1>

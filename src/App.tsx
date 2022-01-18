@@ -8,6 +8,8 @@ import {
 import dh from "@deephaven/jsapi-shim"; // Import the shim to use the JS API
 import "./App.scss"; // Styles for in this app
 
+const FILTER_COMMAND = "filter";
+
 /**
  * Load an existing Deephaven table with the session provided
  * @param session The Deephaven session object
@@ -56,6 +58,7 @@ async function createTable(session: any) {
 function App() {
   const [model, setModel] = useState<IrisGridModel>();
   const [error, setError] = useState<string>();
+  const [inputFilters, setInputFilters] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const searchParams = new URLSearchParams(window.location.search);
   const canCopy = searchParams.get("canCopy") === "1";
@@ -105,6 +108,25 @@ function App() {
     initApp();
   }, [initApp]);
 
+  useEffect(() => {
+    function receiveMessage(e: MessageEvent) {
+      const { command, value } = e.data;
+      switch (command) {
+        case FILTER_COMMAND:
+          setInputFilters(value);
+          break;
+        default:
+          console.warn("Unrecognized message", e.data);
+          break;
+      }
+    }
+    window.addEventListener("message", receiveMessage);
+
+    return () => {
+      window.removeEventListener("message", receiveMessage);
+    };
+  }, [model]);
+
   const isLoaded = model != null;
 
   return (
@@ -114,6 +136,7 @@ function App() {
           canCopy={canCopy}
           canDownloadCsv={canDownloadCsv}
           model={model}
+          inputFilters={inputFilters}
         />
       )}
       {!isLoaded && (
