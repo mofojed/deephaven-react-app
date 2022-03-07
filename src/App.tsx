@@ -1,11 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { LoadingOverlay } from "@deephaven/components"; // Use the loading spinner from the Deephaven components package
 import {
-  IrisGrid,
-  IrisGridModel,
-  IrisGridModelFactory,
-} from "@deephaven/iris-grid"; // iris-grid is used to display Deephaven tables
+  HorizontalGridLines,
+  VerticalGridLines,
+  XAxis,
+  XYPlot,
+  YAxis,
+  VerticalBarSeries,
+  VerticalBarSeriesPoint,
+} from "react-vis";
 import dh from "@deephaven/jsapi-shim"; // Import the shim to use the JS API
+import "react-vis/dist/style.css";
 import "./App.scss"; // Styles for in this app
 
 /**
@@ -33,9 +38,9 @@ async function loadTable(session: any, name: string) {
 async function createTable(session: any) {
   console.log(`Creating table...`);
 
-  await session.runCode("from deephaven.TableTools import timeTable");
+  await session.runCode("from deephaven.TableTools import emptyTable");
   const result = await session.runCode(
-    't = timeTable("00:00:01").update("A=i")'
+    't = emptyTable(10).update("x=i", "y=i*i")'
   );
 
   const definition = result.changes.created[0];
@@ -54,7 +59,7 @@ async function createTable(session: any) {
  * See create-react-app docs for how to update these env vars: https://create-react-app.dev/docs/adding-custom-environment-variables/
  */
 function App() {
-  const [model, setModel] = useState<IrisGridModel>();
+  const [data, setData] = useState<VerticalBarSeriesPoint[]>();
   const [error, setError] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -83,14 +88,29 @@ function App() {
         ? loadTable(session, tableName)
         : createTable(session));
 
-      // Create the `IrisGridModel` for use with the `IrisGrid` component
-      console.log(`Creating model...`);
+      table.setViewport(0, table.size);
 
-      const newModel = await IrisGridModelFactory.makeModel(table);
+      const viewportData = await table.getViewportData();
 
-      setModel(newModel);
+      const newData = [];
 
-      console.log("Table successfully loaded!");
+      const { columns } = viewportData;
+      for (let r = 0; r < viewportData.rows.length; r += 1) {
+        const row = viewportData.rows[r];
+        const newRow: Record<string, number> = {};
+        for (let c = 0; c < columns.length; c += 1) {
+          const column = columns[c];
+          newRow[column.name] = row.get(column);
+        }
+
+        newData.push(newRow);
+      }
+
+      setData(newData as any);
+
+      table.close();
+
+      console.log("Data successfully loaded!", newData);
     } catch (e) {
       console.error("Unable to load table", e);
       setError(`${e}`);
@@ -102,11 +122,19 @@ function App() {
     initApp();
   }, [initApp]);
 
-  const isLoaded = model != null;
+  const isLoaded = data != null;
 
   return (
     <div className="App">
-      {isLoaded && <IrisGrid model={model} />}
+      {isLoaded && (
+        <XYPlot width={400} height={300}>
+          <XAxis />
+          <YAxis />
+          <HorizontalGridLines />
+          <VerticalGridLines />
+          <VerticalBarSeries data={data} barWidth={0.7} />
+        </XYPlot>
+      )}
       {!isLoaded && (
         <LoadingOverlay
           isLoaded={isLoaded}
